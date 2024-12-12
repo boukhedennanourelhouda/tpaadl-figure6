@@ -1,0 +1,105 @@
+package ThreadsInOneSystem
+public
+system MainSystem
+        
+        end MainSystem;
+
+    system implementation MainSystem.impl
+        subcomponents
+            process1: process Process1.impl; -- Processus 1
+            process2: process Process2.impl; -- Processus 2
+            process3: process Process3.impl; -- Processus 3
+           
+        connections
+            conn1: port process1.dataOut -> process3.dataIn2; -- Connexion entre Process1 et Process3
+            conn2: port process2.dataOut -> process3.dataIn1;
+              
+        end MainSystem.impl;
+    
+
+    -- Définition des processus
+
+    process Process1
+        features
+            dataOut: out data port ; 
+           datain1: in data port ; 
+           datain2: in data port ; 
+        end Process1;
+
+    process implementation Process1.impl
+        subcomponents
+            thr1: thread Thr1.impl; -- Thread interne au Process1
+        connections
+            conn_dataOut: port thr1.dataOut -> dataOut;
+            conn_datain1: port datain1 -> Thr1.datain1; 
+            conn_datain2: port datain2 -> Thr1.datain2; 
+    end Process1.impl;
+
+    process Process2
+        features
+            dataIn1: in data port ;  -- Premier port d'entrée
+            dataIn2: in data port ;  -- Deuxième port d'entrée
+            dataOut: out data port ; -- Port de sortie
+        end Process2;
+
+    process implementation Process2.impl
+        subcomponents
+            thr2: thread Thr2.impl; -- Thread interne au Process2
+        connections
+            conn_dataIn1: port dataIn1 -> thr2.dataIn1; 
+            conn_dataIn2: port dataIn2 -> thr2.dataIn2;
+            conn_dataOut: port thr2.dataOut -> dataOut; -- Relie le port de sortie du thread au port externe
+    end Process2.impl;
+
+    process Process3
+        features
+            dataIn1: in data port ;  -- Premier port d'entrée
+            dataIn2: in data port ;  -- Deuxième port d'entrée
+            dataOut: out data port ; -- Port de sortie
+        end Process3;
+
+    process implementation Process3.impl
+        subcomponents
+            thr3: thread Thr3.impl; -- Thread interne au Process3
+        connections
+            conn_dataIn1: port dataIn1 -> thr3.dataIn1; -- Relie les ports d'entrée externes au thread
+            conn_dataIn2: port dataIn2 -> thr3.dataIn2;
+            conn_dataOut: port thr3.dataOut -> dataOut; -- Relie le port de sortie du thread au port externe
+    end Process3.impl;
+
+    -- Définition des threads
+
+    thread Thr1
+        features
+            dataOut: out data port ; -- Port de sortie pour transmettre les données
+            datain1: in data port ; 
+            datain2: in data port ; 
+        end Thr1;
+
+    thread implementation Thr1.impl
+    end Thr1.impl;
+
+    thread Thr2
+        features
+            dataIn1: in data port ;  -- Premier port d'entrée
+            dataIn2: in data port ;  -- Deuxième port d'entrée
+            dataOut: out data port ; -- Port de sortie
+        end Thr2;
+
+    thread implementation Thr2.impl
+    end Thr2.impl;
+
+    thread Thr3
+        features
+            dataIn1: in data port ;  -- Premier port d'entrée
+            dataIn2: in data port ;  -- Deuxième port d'entrée
+            dataOut: out data port ; -- Port de sortie
+        end Thr3;
+
+    thread implementation Thr3.impl
+    end Thr3.impl;
+
+    -- Définition du système principal contenant les trois processus
+    
+
+end ThreadsInOneSystem;
